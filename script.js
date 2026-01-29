@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     initSmoothScrolling();
     initIntersectionObserver();
-    initWordCycle();
-    initTagCloud();
+    // initWordCycle(); // Replaced by CSS Animation
+    initSolidSphere();
     initContactInteractions();
+    initNeuralGrid();
 });
 
 /* --- Smooth Scrolling --- */
@@ -44,77 +45,40 @@ function initIntersectionObserver() {
     });
 }
 
-/* --- Hero Text Cycling --- */
-function initWordCycle() {
-    const words = ["AI MANIAC", "CINEPHILE", "MARVELOUS", "DIRECTOR", "ELECTRONICS ENTHUSIAST"];
-    const element = document.querySelector('.dynamic-role');
-    if (!element) return;
-
-    let wordIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    let typeSpeed = 100;
-
-    function type() {
-        const currentWord = words[wordIndex];
-        
-        if (isDeleting) {
-            element.textContent = currentWord.substring(0, charIndex - 1);
-            charIndex--;
-            typeSpeed = 50; // Faster deleting
-        } else {
-            element.textContent = currentWord.substring(0, charIndex + 1);
-            charIndex++;
-            typeSpeed = 100; // Normal typing
-        }
-
-        if (!isDeleting && charIndex === currentWord.length) {
-            isDeleting = true;
-            typeSpeed = 2000; // Pause at end
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            wordIndex = (wordIndex + 1) % words.length;
-            typeSpeed = 500; // Pause before new word
-        }
-
-        setTimeout(type, typeSpeed);
-    }
-
-    // Initialize with first word already potentially there
-    charIndex = element.textContent.length;
-    isDeleting = true; // Start by deleting default text then cycle
-    setTimeout(type, 1000);
-}
-
-/* --- 3D Tag Cloud Sphere --- */
-function initTagCloud() {
+/* --- Solid Particle Sphere (Replaces Tag Cloud) --- */
+function initSolidSphere() {
     const container = document.getElementById('sphere-container');
     if (!container) return;
+    
+    // Clear previous if any
+    container.innerHTML = '';
 
-    const tags = [
-        'Python', 'Machine Learning', 'NLP', 'TensorFlow', 'Vidya', 
-        'Guidance', 'Future', 'AI', 'Education', 'Data', 
-        'Neural Networks', 'Algorithms', 'Logic', 'Career', 'Choices'
-    ];
+    const radius = 150;
+    const particleCount = 40; // Number of solid nodes
+    const particles = [];
 
-    const radius = 150; // Radius of the sphere
-    const cloudItems = [];
-
-    // Create Tag Elements
-    tags.forEach(text => {
+    // Create Particle Elements
+    for (let i = 0; i < particleCount; i++) {
         const el = document.createElement('div');
-        el.className = 'tag-cloud-item';
-        el.textContent = text;
+        el.className = 'sphere-particle';
+        // Varying sizes
+        const size = Math.random() * 8 + 4; // 4px to 12px
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+        el.style.backgroundColor = '#ffffff';
+        el.style.borderRadius = '50%';
+        el.style.position = 'absolute';
+        el.style.boxShadow = `0 0 ${size}px rgba(255, 255, 255, 0.5)`;
+        
         container.appendChild(el);
-        cloudItems.push({ el, x: 0, y: 0, z: 0, phi: 0, theta: 0 });
-    });
+        particles.push({ el, x: 0, y: 0, z: 0, phi: 0, theta: 0 });
+    }
 
-    // Distribute points on a sphere (Fibonacci Sphere)
-    const count = tags.length;
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden Angle
+    // Distribute points on a sphere
+    const phi = Math.PI * (3 - Math.sqrt(5));
 
-    cloudItems.forEach((item, i) => {
-        const y = 1 - (i / (count - 1)) * 2; // y goes from 1 to -1
+    particles.forEach((item, i) => {
+        const y = 1 - (i / (particleCount - 1)) * 2;
         const radiusAtY = Math.sqrt(1 - y * y);
         const theta = phi * i;
 
@@ -126,28 +90,23 @@ function initTagCloud() {
     let mouseX = 0;
     let mouseY = 0;
 
-    // Mouse Interaction
     container.addEventListener('mousemove', (e) => {
         const rect = container.getBoundingClientRect();
         mouseX = (e.clientX - rect.left - rect.width / 2) * 0.001;
         mouseY = (e.clientY - rect.top - rect.height / 2) * 0.001;
     });
     
-    // Auto rotation fallback
     let autoRotateX = 0.002;
     let autoRotateY = 0.002;
 
     function animate() {
-        // Use mouse or auto rotation
         const rotationX = mouseX || autoRotateX;
         const rotationY = mouseY || autoRotateY;
 
-        cloudItems.forEach(item => {
-            // Rotate around Y axis
-            const cy = -rotationX; // Mouse X affects Y rotation
-            const cx = rotationY;  // Mouse Y affects X rotation
+        particles.forEach(item => {
+            const cy = -rotationX;
+            const cx = rotationY;
 
-            // Rotation Logic
             const x1 = item.x * Math.cos(cy) + item.z * Math.sin(cy);
             const z1 = -item.x * Math.sin(cy) + item.z * Math.cos(cy);
             
@@ -158,24 +117,126 @@ function initTagCloud() {
             item.y = y1;
             item.z = z2;
 
-            // Project to 2D
-            const scale = radius / (radius - item.z * radius); // Simple perspective
-            const alpha = (item.z + 1) / 2; // Opacity based on depth
-            
-            // Apply styles
-            // We scale item.x/y by radius to get pixels
-            // Z-index based on Z position
-            const transform = `translate(-50%, -50%) translate3d(${item.x * radius}px, ${item.y * radius}px, ${item.z * radius}px) scale(${1 + (item.z * 0.5)})`;
+            const alpha = (item.z + 1) / 2;
+            const transform = `translate(-50%, -50%) translate3d(${item.x * radius}px, ${item.y * radius}px, ${item.z * radius}px)`;
             
             item.el.style.transform = transform;
-            item.el.style.opacity = 0.5 + (0.5 * alpha);
+            item.el.style.opacity = 0.2 + (0.8 * alpha);
             item.el.style.zIndex = Math.floor(item.z * 100);
-            item.el.style.filter = `blur(${(1-alpha) * 2}px)`;
         });
 
         requestAnimationFrame(animate);
     }
+    animate();
+}
 
+/* --- Advanced Neural Grid Background --- */
+function initNeuralGrid() {
+    const canvas = document.getElementById('bg-canvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    let width, height;
+    let nodes = [];
+    
+    const config = {
+        nodeCount: 80,
+        connectDistance: 150,
+        mouseDistance: 250,
+        nodeSize: 2
+    };
+
+    const mouse = { x: null, y: null };
+
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    window.addEventListener('resize', resize);
+    
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+
+    class Node {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.baseX = this.x;
+            this.baseY = this.y;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+
+            // Mouse Interaction (Warp Grid)
+            if (mouse.x != null) {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < config.mouseDistance) {
+                    const force = (config.mouseDistance - distance) / config.mouseDistance;
+                    const directionX = (dx / distance) * force * 5; // Stronger push
+                    const directionY = (dy / distance) * force * 5;
+                    
+                    this.x -= directionX;
+                    this.y -= directionY;
+                }
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, config.nodeSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        nodes = [];
+        resize();
+        for (let i = 0; i < config.nodeCount; i++) {
+            nodes.push(new Node());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        for (let i = 0; i < nodes.length; i++) {
+            nodes[i].update();
+            nodes[i].draw();
+            
+            for (let j = i; j < nodes.length; j++) {
+                let dx = nodes[i].x - nodes[j].x;
+                let dy = nodes[i].y - nodes[j].y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < config.connectDistance) {
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance/config.connectDistance})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[j].x, nodes[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    init();
     animate();
 }
 
@@ -214,7 +275,7 @@ function initContactInteractions() {
             // Simulate network request
             setTimeout(() => {
                 btn.innerText = "Sent!";
-                messageContainer.innerHTML = "Message Received! (This is a demo)";
+                messageContainer.innerHTML = "Message Received!"; // Removed "This is a demo"
                 messageContainer.classList.add('success');
                 
                 form.reset();
@@ -225,7 +286,7 @@ function initContactInteractions() {
                     messageContainer.innerHTML = "";
                     messageContainer.classList.remove('success');
                 }, 3000);
-            }, 1500);
+            }, 1000);
         });
     }
 }

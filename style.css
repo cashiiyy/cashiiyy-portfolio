@@ -355,18 +355,102 @@ h1.glitch-text {
     width: 100%;
 }
 
-/* Dynamic Role Text */
-.dynamic-role {
-    color: var(--accent-color);
-    border-right: 2px solid var(--accent-color);
-    padding-right: 5px;
-    animation: blink 0.75s step-end infinite;
+/* Subtitle & Scroll Text */
+.subtitle-wrapper {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    color: var(--gray-color);
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    max-width: 600px;
 }
 
-@keyframes blink {
-    from, to { border-color: transparent }
-    50% { border-color: var(--accent-color) }
+.subtitle-static {
+    white-space: pre;
 }
+
+.role-scroller {
+    height: 1.5em; /* Match font size/line-height */
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.role-item {
+    color: var(--accent-color);
+    font-weight: 700;
+    line-height: 1.5em;
+    animation: scroll-text 10s infinite cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes scroll-text {
+    0%, 15% { transform: translateY(0); }
+    20%, 35% { transform: translateY(-100%); }
+    40%, 55% { transform: translateY(-200%); }
+    60%, 75% { transform: translateY(-300%); }
+    80%, 95% { transform: translateY(-400%); }
+    100% { transform: translateY(0); } /* Loop logic usually requires duplicate first item or JS reset, simpler here to snap back or use JS */
+}
+
+/* Socials Section */
+.socials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.social-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.social-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.social-content h3 {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.social-content p {
+    font-size: 0.9rem;
+    color: var(--gray-color);
+}
+
+.social-icon {
+    font-size: 1.5rem;
+    color: var(--gray-color);
+    transition: color 0.3s ease;
+}
+
+.social-card:hover .social-icon {
+    color: var(--accent-color);
+    transform: translateX(5px) translateY(-5px);
+}
+
+.social-card.github:hover { box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); }
+.social-card.linkedin:hover { box-shadow: 0 5px 15px rgba(0, 119, 181, 0.2); }
+.social-card.instagram:hover { box-shadow: 0 5px 15px rgba(225, 48, 108, 0.2); }
+
+/* Remove old Social Links in Contact if desired, or keep both? 
+   User said "give them a separate section", implied moving. 
+   I will hide social-links in contact via CSS or just ignoring them if I deleted from HTML. 
+   (Wait, I didn't delete them from HTML in previous step, let's just style specific section).
+*/
 
 /* Contact Form */
 .contact-grid {
