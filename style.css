@@ -413,50 +413,77 @@ h1.glitch-text {
     overflow: hidden;
 }
 
+/* Social Hover Effect (White) */
 .social-card:hover {
-    border-color: var(--accent-color);
+    border-color: #ffffff;
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.05);
+    background: #ffffff;
 }
 
-.social-content h3 {
-    font-family: var(--font-mono);
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-    color: var(--accent-color);
-}
-
-.social-content p {
-    font-size: 0.9rem;
-    color: var(--gray-color);
-}
-
-.social-icon {
-    font-size: 1.5rem;
-    color: var(--gray-color);
-    transition: color 0.3s ease;
-}
-
+.social-card:hover .social-content h3,
+.social-card:hover .social-content p,
 .social-card:hover .social-icon {
-    color: var(--accent-color);
-    transform: translateX(5px) translateY(-5px);
+    color: #000000;
 }
-
-.social-card.github:hover { box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); }
-.social-card.linkedin:hover { box-shadow: 0 5px 15px rgba(0, 119, 181, 0.2); }
-.social-card.instagram:hover { box-shadow: 0 5px 15px rgba(225, 48, 108, 0.2); }
-
-/* Remove old Social Links in Contact if desired, or keep both? 
-   User said "give them a separate section", implied moving. 
-   I will hide social-links in contact via CSS or just ignoring them if I deleted from HTML. 
-   (Wait, I didn't delete them from HTML in previous step, let's just style specific section).
-*/
 
 /* Contact Form */
 .contact-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr; /* Adjusted for form width */
+    grid-template-columns: 1.5fr 1fr;
     gap: 4rem;
+    align-items: center; /* Better alignment without extra socials */
+}
+
+/* --- Responsive Design (Mobile/Android) --- */
+@media (max-width: 900px) {
+    h1.glitch-text { font-size: 3rem; }
+    .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .about-content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 0 1.5rem; }
+    
+    /* Hero */
+    h1.glitch-text { font-size: 2.5rem; }
+    .subtitle-wrapper { flex-direction: column; align-items: flex-start; margin-bottom: 2rem; }
+    .role-scroller { margin-top: 0.5rem; }
+    
+    /* Navigation */
+    .nav-links { display: none; } /* TODO: Add mobile menu toggle if needed, or simple stacking */
+    /* For simple portfolio, maybe just smaller fonts or horizontal scroll */
+    /* Let's keep it simple for now or style it for mobile if requested */
+    .nav-links { 
+        display: flex; 
+        gap: 1rem; 
+        font-size: 0.8rem; 
+        padding-left: 0;
+    }
+    
+    /* Grids */
+    .skills-grid, .socials-grid, .featured-project {
+        grid-template-columns: 1fr;
+    }
+
+    /* Form */
+    .contact-grid {
+        display: flex;
+        flex-direction: column-reverse; /* Info on top or Text on bottom? */
+        flex-direction: column; 
+    }
+    
+    .contact-info-wrapper {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .large-text { font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+    h1.glitch-text { font-size: 2rem; }
+    .btn { width: 100%; text-align: center; margin-bottom: 0.5rem; }
+    .cta-group { display: flex; flex-direction: column; gap: 0.5rem; }
 }
 
 .form-group {
