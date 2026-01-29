@@ -355,72 +355,145 @@ h1.glitch-text {
     width: 100%;
 }
 
-/* Contact */
+/* Dynamic Role Text */
+.dynamic-role {
+    color: var(--accent-color);
+    border-right: 2px solid var(--accent-color);
+    padding-right: 5px;
+    animation: blink 0.75s step-end infinite;
+}
+
+@keyframes blink {
+    from, to { border-color: transparent }
+    50% { border-color: var(--accent-color) }
+}
+
+/* Contact Form */
 .contact-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr; /* Adjusted for form width */
     gap: 4rem;
 }
 
-.large-text {
-    font-size: 2rem;
-    font-weight: 300;
-    margin-bottom: 2rem;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
-.email-link {
-    font-size: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 5px;
-}
-
-.email-link:hover {
-    color: var(--accent-color);
-    border-bottom-color: var(--accent-color);
-}
-
-.social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.social-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
     font-family: var(--font-mono);
+    color: var(--gray-color);
+    font-size: 0.9rem;
 }
 
-.social-item:hover {
-    background: var(--accent-color);
-    color: var(--bg-color);
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
     border-color: var(--accent-color);
 }
 
-/* Footer */
-footer {
-    padding: 2rem 0;
-    text-align: center;
-    color: var(--gray-color);
+.form-message {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    min-height: 1.5em; 
+}
+
+.form-message.success {
+    color: #00ff00;
+}
+
+/* Email Copy */
+.email-copy-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.copy-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-color);
+    color: var(--bg-color);
+    padding: 5px 10px;
+    border-radius: 4px;
     font-size: 0.8rem;
     font-family: var(--font-mono);
-    border-top: 1px solid var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.email-copy-wrapper:hover .copy-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sphere Visual */
+.sphere-visual {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.tag-cloud-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    font-family: var(--font-mono);
+    font-size: 1rem; /* Base size */
+    color: var(--gray-color);
+    transition: color 0.3s ease;
+    cursor: default;
+    user-select: none;
+    will-change: transform, opacity;
+}
+
+.tag-cloud-item:hover {
+    color: var(--accent-color);
+    text-shadow: 0 0 10px var(--accent-color);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    .sphere-visual {
+        display: none; /* Hide complex 3D on mobile if performance is an issue, or adjust height */
+        height: 300px;
+        display: flex; /* Keep it visible but smaller */
+    }
     .hero-section h1.glitch-text {
         font-size: 2.5rem;
     }
     
     .nav-links {
-        display: none; /* In a real project, we'd add a mobile menu burger */
+        display: none; 
     }
     
-    .about-content, .featured-project, .contact-grid {
+    .about-content, .featured-project {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
