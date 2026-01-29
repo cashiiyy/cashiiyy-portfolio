@@ -327,6 +327,11 @@ h1.glitch-text {
     border-radius: 50%;
 }
 
+.project-links {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
 .tech-stack {
     margin-top: 2rem;
     display: flex;
