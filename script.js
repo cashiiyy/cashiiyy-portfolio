@@ -264,18 +264,23 @@ function initContactInteractions() {
     const messageContainer = document.querySelector('.form-message');
 
     if (form && messageContainer) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
+        form.addEventListener('submit', () => {
+            // NOTE: We do NOT preventDefault() here so the form actually submits to the target iframe.
             const btn = form.querySelector('button');
             const originalBtnText = btn.innerText;
             
             btn.disabled = true;
             btn.innerText = "Sending...";
-            
-            // Simulate network request
-            setTimeout(() => {
+
+            const iframe = document.getElementById('hidden_iframe');
+            let isComplete = false;
+
+            const handleSuccess = () => {
+                if (isComplete) return;
+                isComplete = true;
+                
                 btn.innerText = "Sent!";
-                messageContainer.innerHTML = "Message Received!"; // Removed "This is a demo"
+                messageContainer.innerHTML = "Message Received!";
                 messageContainer.classList.add('success');
                 
                 form.reset();
@@ -286,7 +291,17 @@ function initContactInteractions() {
                     messageContainer.innerHTML = "";
                     messageContainer.classList.remove('success');
                 }, 3000);
-            }, 1000);
+            };
+
+            // Detect submission complete via iframe load (best effort)
+            const onLoad = () => {
+                handleSuccess();
+                iframe.removeEventListener('load', onLoad);
+            };
+            iframe.addEventListener('load', onLoad);
+
+            // Fallback ensuring UI resets if load event is blocked by cross-origin policies
+            setTimeout(handleSuccess, 2000);
         });
     }
 }
